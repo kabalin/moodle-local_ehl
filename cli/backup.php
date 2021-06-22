@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script allows to do backup.
+ * Copy of admin/cli/backup.php adjusted for EHL requirements.
  *
  * @package    core
  * @subpackage cli
@@ -25,46 +25,48 @@
 
 define('CLI_SCRIPT', 1);
 
-require(__DIR__.'/../../config.php');
+require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(array(
+[$options, $unrecognized] = cli_get_params([
     'courseid' => false,
     'courseshortname' => '',
+    'courseidnumber' => '',
     'destination' => '',
+    'nousers' => false,
     'help' => false,
-    ), array('h' => 'help'));
+    ], ['h' => 'help', 'nu' => 'nousers']);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-if ($options['help'] || !($options['courseid'] || $options['courseshortname'])) {
+if ($options['help'] || !($options['courseid'] || $options['courseshortname'] || $options['courseidnumber'])) {
     $help = <<<EOL
 Perform backup of the given course.
 
 Options:
 --courseid=INTEGER          Course ID for backup.
 --courseshortname=STRING    Course shortname for backup.
+--courseidnumber=STRING     Course idnumber for backup.
 --destination=STRING        Path where to store backup file. If not set the backup
                             will be stored within the course backup file area.
+-nu, --nousers              Do not include user enrolments.
 -h, --help                  Print out this help.
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/cli/backup.php --courseid=2 --destination=/moodle/backup/\n
+\$sudo -u www-data /usr/bin/php local/ehl/cli/backup.php --courseid=2 --destination=/moodle/backup/\n
 EOL;
 
     echo $help;
-    die;
+    exit(0);
 }
 
-$admin = get_admin();
-if (!$admin) {
-    mtrace("Error: No admin account was found");
-    die;
+if (!$admin = get_admin()) {
+    cli_error(get_string('noadmins', 'error'));
 }
 
 // Do we need to store backup somewhere else?
@@ -78,14 +80,27 @@ if (!empty($dir)) {
 
 // Check that the course exists.
 if ($options['courseid']) {
-    $course = $DB->get_record('course', array('id' => $options['courseid']), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $options['courseid']], '*');
 } else if ($options['courseshortname']) {
-    $course = $DB->get_record('course', array('shortname' => $options['courseshortname']), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['shortname' => $options['courseshortname']], '*');
+} else if ($options['courseidnumber']) {
+    $course = $DB->get_record('course', ['idnumber' => $options['courseidnumber']], '*');
 }
 
-cli_heading('Performing backup...');
+if (!$course) {
+    cli_error(get_string('invalidcourse', 'error'));
+}
+
+cli_heading(get_string('backupcourse', 'backup', $course->shortname));
 $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
                             backup::INTERACTIVE_YES, backup::MODE_GENERAL, $admin->id);
+
+// Set users including preference.
+if ($options['nousers']) {
+    cli_writeln("Skipping user enrolments");
+    $bc->get_plan()->get_setting('users')->set_value(0);
+}
+
 // Set the default filename.
 $format = $bc->get_format();
 $type = $bc->get_type();
@@ -104,16 +119,16 @@ $file = $results['backup_destination']; // May be empty if file already moved to
 // Do we need to store backup somewhere else?
 if (!empty($dir)) {
     if ($file) {
-        mtrace("Writing " . $dir.'/'.$filename);
+        cli_writeln("Writing " . $dir.'/'.$filename);
         if ($file->copy_content_to($dir.'/'.$filename)) {
             $file->delete();
-            mtrace("Backup completed.");
+            cli_writeln("Backup completed.");
         } else {
-            mtrace("Destination directory does not exist or is not writable. Leaving the backup in the course backup file area.");
+            cli_writeln("Destination directory does not exist or is not writable. Leaving the backup in the course backup file area.");
         }
     }
 } else {
-    mtrace("Backup completed, the new file is listed in the backup area of the given course");
+    cli_writeln("Backup completed, the new file is listed in the backup area of the given course");
 }
 $bc->destroy();
 exit(0);
