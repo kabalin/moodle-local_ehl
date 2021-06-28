@@ -14,16 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace local_ehl\form;
+
+defined('MOODLE_INTERNAL') || die();
+require_once("$CFG->dirroot/mod/quiz/mod_form.php");
+
 /**
- * Version details
+ * mod_quiz_mod_form local proxy class to emulate submission.
  *
  * @package   local_ehl
  * @copyright 2021 Ecole hôtelière de Lausanne {@link https://www.ehl.edu/}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class mod_quiz_mod_form extends \mod_quiz_mod_form {
 
-defined('MOODLE_INTERNAL') || die();
+    public function __construct($current, $section, $cm, $course) {
+        $this->_modname = 'quiz';
+        parent::__construct($current, $section, $cm, $course);
+        $this->_form->updateSubmission((array) $current, []);
+    }
 
-$plugin->version   = 2021062600;
-$plugin->requires  = 2019052000; // Requires Moodle 3.7.
-$plugin->component = 'local_ehl';
+    /**
+     * Exposes $this->_form object (usually called $mform)
+     *
+     * @return \MoodleQuickForm
+     */
+    public function get_quick_form(): \MoodleQuickForm {
+        return $this->_form;
+    }
+}

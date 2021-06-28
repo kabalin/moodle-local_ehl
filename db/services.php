@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * local_ehl external functions and service definitions.
  *
  * @package   local_ehl
  * @copyright 2021 Ecole hôtelière de Lausanne {@link https://www.ehl.edu/}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2021062600;
-$plugin->requires  = 2019052000; // Requires Moodle 3.7.
-$plugin->component = 'local_ehl';
+$functions = [
+    'local_ehl_mod_quiz_update_timing_settings' => [
+        'classname' => \local_ehl\external\mod_quiz_update_timing_settings::class,
+        'methodname' => 'execute',
+        'description' => 'Update quiz timing settings',
+        'type' => 'write',
+    ],
+];
