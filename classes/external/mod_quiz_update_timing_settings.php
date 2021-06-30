@@ -123,7 +123,6 @@ class mod_quiz_update_timing_settings extends external_api {
         // Validate form.
         if (!$mform->is_validated()) {
             $errors = $mform->get_quick_form()->_errors;
-            var_dump($errors);
             $errordescr = [];
             foreach ($errors as $key => $value) {
                 $errordescr[] = $key.' - '.$value;
