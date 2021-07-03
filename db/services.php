@@ -30,4 +30,10 @@ $functions = [
         'description' => 'Update quiz timing settings',
         'type' => 'write',
     ],
+    'local_ehl_mod_quiz_update_grading_settings' => [
+        'classname' => \local_ehl\external\mod_quiz_update_grading_settings::class,
+        'methodname' => 'execute',
+        'description' => 'Update quiz grading settings',
+        'type' => 'write',
+    ],
 ];
