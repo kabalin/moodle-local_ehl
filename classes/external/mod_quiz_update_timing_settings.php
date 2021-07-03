@@ -66,7 +66,6 @@ class mod_quiz_update_timing_settings extends external_api {
      */
     public static function execute(int $quizid, int $timeopen, int $timeclose, int $timelimit, string $overduehandling, int $graceperiod): array {
         global $DB, $CFG;
-        $result = false;
         $params = self::validate_parameters(self::execute_parameters(), [
             'quizid' => $quizid,
             'timeopen' => $timeopen,
@@ -95,27 +94,38 @@ class mod_quiz_update_timing_settings extends external_api {
         }
 
         // Customise data. We only update values that were specified.
-        if ($params['timeopen'] !== -1) {
+        $changes = [];
+        if ($params['timeopen'] !== -1 && $params['timeopen'] != $data->timeopen) {
+            $changes['timeopen'] = "{$data->timeopen} => " . $params['timeopen'];
             $data->timeopen = $params['timeopen'];
         }
-        if ($params['timeclose'] !== -1) {
+        if ($params['timeclose'] !== -1 && $params['timeclose'] != $data->timeclose) {
+            $changes['timeclose'] = "{$data->timeclose} => " . $params['timeclose'];
             $data->timeclose = $params['timeclose'];
         }
-        if ($params['timelimit'] !== -1) {
+        if ($params['timelimit'] !== -1 && $params['timelimit'] != $data->timelimit) {
+            $changes['timelimit'] = "{$data->timelimit} => " . $params['timelimit'];
             $data->timelimit = $params['timelimit'];
         }
-        if ($params['overduehandling']) {
+        if ($params['overduehandling'] && $params['overduehandling'] != $data->overduehandling) {
+            $changes['overduehandling'] = "{$data->overduehandling} => " . $params['overduehandling'];
             $data->overduehandling = $params['overduehandling'];
         }
-        if ($params['graceperiod'] !== -1) {
+        if ($params['graceperiod'] !== -1 && $params['graceperiod'] != $data->graceperiod) {
+            $changes['graceperiod'] = "{$data->graceperiod} => " . $params['graceperiod'];
             $data->graceperiod = $params['graceperiod'];
         }
+
+        if (!count($changes)) {
+            // Nothing to change. New values are matching current ones.
+            return ['status' => false];
+        }
+
         if ($data->availabilityconditionsjson === null) {
             // Null is stored in DB for empty availability tree.
             // Set to empty string to make validation happy, normally JS sets this empty tree JSON in the web form.
             $data->availabilityconditionsjson = '';
         }
-
         // Get form instance.
         $mform = new \local_ehl\form\mod_quiz_mod_form($data, $cw->section, $cm, $course);
         $mform->set_data($data);
@@ -130,12 +140,9 @@ class mod_quiz_update_timing_settings extends external_api {
             throw new \invalid_parameter_exception("Invalid parameters: " . implode(';', $errordescr));
         }
 
-        // TODO: fix review options, they are missing.
         $fromform = $mform->get_data();
         update_moduleinfo($cm, $fromform, $course, $mform);
-        $result = true;
-
-        return ['status' => $result];
+        return ['status' => true, 'changes' => json_encode($changes)];
     }
 
     /**
@@ -145,7 +152,10 @@ class mod_quiz_update_timing_settings extends external_api {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'status' => new external_value(PARAM_BOOL, 'Success status')
+            'status' => new external_value(PARAM_BOOL, 'Success status'),
+            'changes' => new external_value(PARAM_RAW,
+                'JSON encoded list of settings that changed', VALUE_DEFAULT, ''),
+
         ]);
     }
 }
