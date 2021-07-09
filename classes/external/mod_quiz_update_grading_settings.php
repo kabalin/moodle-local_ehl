@@ -45,7 +45,7 @@ class mod_quiz_update_grading_settings extends external_api {
         return new external_function_parameters(
             [
                 'quizid' => new external_value(PARAM_INT, 'quiz instance id'),
-                'attemptsallowed' => new external_value(PARAM_INT, 'Number of attempts allowed, 0 for unlimited',
+                'attempts' => new external_value(PARAM_INT, 'Number of attempts allowed, 0 for unlimited',
                     VALUE_DEFAULT, -1),
                 'grademethod' => new external_value(PARAM_INT, 'Grade method. Valid for more than 1 attempt.'
                     . ' 1 - Highest grade, 2 - Average grade, 3 - First attempt, 4 - Last attempt', VALUE_DEFAULT, -1),
@@ -57,15 +57,15 @@ class mod_quiz_update_grading_settings extends external_api {
      * Update quiz grading settings
      *
      * @param int $quizid
-     * @param int $attemptsallowed
+     * @param int $attempts
      * @param int $grademethod
      * @return array returns true in case of grading settings were updated successfully.
      */
-    public static function execute(int $quizid, int $attemptsallowed, int $grademethod): array {
-        global $DB, $CFG;
+    public static function execute(int $quizid, int $attempts, int $grademethod): array {
+        global $DB;
         $params = self::validate_parameters(self::execute_parameters(), [
             'quizid' => $quizid,
-            'attemptsallowed' => $attemptsallowed,
+            'attempts' => $attempts,
             'grademethod' => $grademethod,
         ]);
 
@@ -83,8 +83,12 @@ class mod_quiz_update_grading_settings extends external_api {
             throw new \invalid_parameter_exception('Invalid grademethod value');
         }
 
-        if ($params['attemptsallowed'] === 1 && $params['grademethod'] !== -1) {
+        if ($params['attempts'] === 1 && $params['grademethod'] !== -1) {
             throw new \invalid_parameter_exception('grademethod cant be set when 1 attempt is allowed.');
+        }
+
+        if ($params['attempts'] > QUIZ_MAX_ATTEMPT_OPTION) {
+            throw new \invalid_parameter_exception('Invalid attempts value, it should not exceed ' . QUIZ_MAX_ATTEMPT_OPTION);
         }
 
         // Customise data. We only update values that were specified.
@@ -93,9 +97,9 @@ class mod_quiz_update_grading_settings extends external_api {
             $changes['grademethod'] = "{$data->grademethod} => " . $params['grademethod'];
             $data->grademethod = $params['grademethod'];
         }
-        if ($params['attemptsallowed'] !== -1 && $params['attemptsallowed'] != $data->attemptsallowed) {
-            $changes['attemptsallowed'] = "{$data->attemptsallowed} => " . $params['attemptsallowed'];
-            $data->attemptsallowed = $params['attemptsallowed'];
+        if ($params['attempts'] !== -1 && $params['attempts'] != $data->attempts) {
+            $changes['attempts'] = "{$data->attempts} => " . $params['attempts'];
+            $data->attempts = $params['attempts'];
         }
 
         if (!count($changes)) {

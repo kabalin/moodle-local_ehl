@@ -95,13 +95,18 @@ class mod_quiz_update_review_settings extends external_api {
      * Update quiz review settings
      *
      * @param int $quizid
-     * @param int $attemptsallowed
-     * @param int $grademethod
-     * @return array returns true in case of grading settings were updated successfully.
+     * @param array $attempt
+     * @param array $correctness
+     * @param array $marks
+     * @param array $specificfeedback
+     * @param array $generalfeedback
+     * @param array $rightanswer
+     * @param array $overallfeedback
+     * @return array returns true in case of review settings were updated successfully.
      */
     public static function execute(int $quizid, array $attempt, array $correctness, array $marks,
             array $specificfeedback, array $generalfeedback, array $rightanswer, array $overallfeedback): array {
-        global $DB, $CFG;
+        global $DB;
         $params = self::validate_parameters(self::execute_parameters(), [
             'quizid' => $quizid,
             'attempt' => $attempt,

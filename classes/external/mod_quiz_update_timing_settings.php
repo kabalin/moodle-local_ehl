@@ -65,7 +65,7 @@ class mod_quiz_update_timing_settings extends external_api {
      * @return array returns true in case of timing settings were updated successfully.
      */
     public static function execute(int $quizid, int $timeopen, int $timeclose, int $timelimit, string $overduehandling, int $graceperiod): array {
-        global $DB, $CFG;
+        global $DB;
         $params = self::validate_parameters(self::execute_parameters(), [
             'quizid' => $quizid,
             'timeopen' => $timeopen,

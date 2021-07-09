@@ -38,8 +38,8 @@ editing from.
 Only quiz ID is required param for each webservise, others are optional. If
 param is not supplied this mean it is not going to be changed. Exception is
 `local_ehl_mod_quiz_update_review_setting` webservice, that due to complexity
-requires full params matrix to be provided (any omitted param is counted as
-"unticked" checkbox).
+of implementaiton requires full params matrix to be provided (any omitted
+param is counted as "unticked" checkbox).
 
 Return status `true` indicates that changes were made, `false`
 mean supplied values are matching existing ones. Changes field provides more
@@ -53,7 +53,7 @@ parameters:
 * `quizid` - Quiz instance id (required)
 * `timeopen` - Open date in Unix time stamp, setting to 0 disables
 * `timeclose` - Close date in Unix time stamp, setting to 0 disables
-* `timelimit` - Specify timelimit, setting to 0 disables limit
+* `timelimit` - Specify timelimit in seconds, setting to 0 disables limit
 * `overduehandling` - Overdue handling setting: autosubmit, graceperiod, autoabandon
 * `graceperiod` - Grace period in seconds. Can only be set when Overdue handling is set to graceperiod
 
@@ -74,17 +74,17 @@ $ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
 parameters:
 
 * `quizid` - Quiz instance id (required)
-* `attemptsallowed` - Number of attempts allowed, 0 for unlimited
+* `attempts` - Number of attempts allowed, 0 for unlimited
 * `grademethod` - Grade method. Can be set if there is for more than 1 attempt. 1 - Highest grade, 2 - Average grade, 3 - First attempt, 4 - Last attempt
 
 CLI query example:
 ```
 $ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
---data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_update_grading_settings&quizid=3&attemptsallowed=5'
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_update_grading_settings&quizid=3&attempts=5'
 
 {
   "status": true,
-  "changes": "{\"attemptsallowed\":\" => 5\"}"
+  "changes": "{\"attempts\":\" => 5\"}"
 }
 ```
 
