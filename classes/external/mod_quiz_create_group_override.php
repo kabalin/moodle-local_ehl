@@ -25,7 +25,6 @@ use external_value;
 
 require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-//require_once($CFG->libdir.'/gradelib.php');
 
 /**
  * local_ehl external class mod_quiz_create_group_override
@@ -135,7 +134,7 @@ class mod_quiz_create_group_override extends external_api {
         quiz_update_open_attempts(['quizid'=>$quiz->id]);
         quiz_update_events($quiz);
 
-        return ['status' => true];
+        return ['status' => true, 'overrideid' => $overrideid];
     }
 
     /**
@@ -146,6 +145,7 @@ class mod_quiz_create_group_override extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'Success status'),
+            'overrideid' => new external_value(PARAM_INT, 'Created quiz group override id'),
         ]);
     }
 }
