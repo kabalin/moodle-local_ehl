@@ -155,7 +155,6 @@ class mod_quiz_update_timing_settings extends external_api {
             'status' => new external_value(PARAM_BOOL, 'Success status'),
             'changes' => new external_value(PARAM_RAW,
                 'JSON encoded list of settings that changed', VALUE_DEFAULT, ''),
-
         ]);
     }
 }

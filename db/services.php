@@ -29,31 +29,34 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Update quiz timing settings',
         'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities',
     ],
     'local_ehl_mod_quiz_update_grading_settings' => [
         'classname' => \local_ehl\external\mod_quiz_update_grading_settings::class,
         'methodname' => 'execute',
         'description' => 'Update quiz grading settings',
         'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities',
     ],
     'local_ehl_mod_quiz_update_review_settings' => [
         'classname' => \local_ehl\external\mod_quiz_update_review_settings::class,
         'methodname' => 'execute',
         'description' => 'Update quiz review settings',
         'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities',
     ],
     'local_ehl_mod_quiz_create_group_override' => [
         'classname' => \local_ehl\external\mod_quiz_create_group_override::class,
         'methodname' => 'execute',
         'description' => 'Create group override',
         'type' => 'write',
-        'capability' => 'mod/quiz:manageoverrides',
+        'capabilities' => 'mod/quiz:manageoverrides',
     ],
     'local_ehl_mod_quiz_update_group_override' => [
         'classname' => \local_ehl\external\mod_quiz_update_group_override::class,
         'methodname' => 'execute',
         'description' => 'Update group override',
         'type' => 'write',
-        'capability' => 'mod/quiz:manageoverrides',
+        'capabilities' => 'mod/quiz:manageoverrides',
     ]
 ];
