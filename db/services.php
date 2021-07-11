@@ -42,4 +42,11 @@ $functions = [
         'description' => 'Update quiz review settings',
         'type' => 'write',
     ],
+    'local_ehl_mod_quiz_create_group_override' => [
+        'classname' => \local_ehl\external\mod_quiz_create_group_override::class,
+        'methodname' => 'execute',
+        'description' => 'Create group override',
+        'type' => 'write',
+        'capability' => 'mod/quiz:manageoverrides',
+    ]
 ];
