@@ -48,5 +48,12 @@ $functions = [
         'description' => 'Create group override',
         'type' => 'write',
         'capability' => 'mod/quiz:manageoverrides',
+    ],
+    'local_ehl_mod_quiz_update_group_override' => [
+        'classname' => \local_ehl\external\mod_quiz_update_group_override::class,
+        'methodname' => 'execute',
+        'description' => 'Update group override',
+        'type' => 'write',
+        'capability' => 'mod/quiz:manageoverrides',
     ]
 ];
