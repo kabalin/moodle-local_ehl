@@ -58,5 +58,12 @@ $functions = [
         'description' => 'Update group override',
         'type' => 'write',
         'capabilities' => 'mod/quiz:manageoverrides',
+    ],
+    'local_ehl_mod_quiz_delete_group_override' => [
+        'classname' => \local_ehl\external\mod_quiz_delete_group_override::class,
+        'methodname' => 'execute',
+        'description' => 'Delete group override',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manageoverrides',
     ]
 ];

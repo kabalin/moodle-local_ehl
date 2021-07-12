@@ -61,7 +61,7 @@ class mod_quiz_update_group_override extends external_api {
      * @param int $timeclose
      * @param int $timelimit
      * @param int $attempts
-     * @return array returns status true in case of quiz group override was created.
+     * @return array returns status true in case of quiz group override was updated.
      */
     public static function execute(int $overrideid, int $timeopen, int $timeclose, int $timelimit, int $attempts): array {
         global $DB;
