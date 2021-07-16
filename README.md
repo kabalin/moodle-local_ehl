@@ -147,3 +147,101 @@ $ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
 }
 ```
 
+### Quiz group overrides
+
+These webservices are desinged for managing group overrides. To retrieve
+existing group instances in the course, use `core_group_get_course_groups`.
+
+#### local_ehl_mod_quiz_create_group_override
+
+`local_ehl_mod_quiz_create_group_override` creates group override and supports
+parameters:
+
+* `quizid` - Quiz instance id (required)
+* `groupid` - Group instance id (required),
+* `timeopen` - Open date in Unix time stamp, setting to 0 disables
+* `timeclose` - Close date in Unix time stamp, setting to 0 disables
+* `timelimit` - Specify timelimit in seconds, setting to 0 disables limit
+* `attempts` - Number of attempts allowed, 0 for unlimited
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_create_group_override&quizid=3&groupid=28&timeopen=1625611102'
+
+{
+  "status": true,
+  "overrideid": 10
+}
+```
+
+#### local_ehl_mod_quiz_update_group_override
+
+`local_ehl_mod_quiz_update_group_override` updates existing group override and
+supports parameters:
+
+* `overrideid` - Quiz group override id (required)
+* `timeopen` - Open date in Unix time stamp, setting to 0 disables
+* `timeclose` - Close date in Unix time stamp, setting to 0 disables
+* `timelimit` - Specify timelimit in seconds, setting to 0 disables limit
+* `attempts` - Number of attempts allowed, 0 for unlimited
+
+Not specified parameters are treated as "unchanged" (remain the same). Return
+status false if supplied settings are matching existing, so no update is made.
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_update_group_override&overrideid=10&attempts=5'
+
+{
+  "status": true,
+  "changes": "{\"attempts\":\"0 => 5\"}"
+}
+```
+
+#### local_ehl_mod_quiz_list_group_overrides
+
+`local_ehl_mod_quiz_list_group_overrides` lists existing group overrides and
+supports parameters:
+
+* `quizid` - Quiz instance id (required)
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_list_group_overrides&quizid=3'
+
+{
+  "overrides": [
+    {
+      "id": 10,
+      "quiz": 3,
+      "groupid": 29,
+      "timeopen": 0,
+      "timeclose": 0,
+      "timelimit": 0,
+      "attempts": 5
+    }
+  ]
+}
+```
+
+
+#### local_ehl_mod_quiz_delete_group_override
+
+`local_ehl_mod_quiz_delete_group_override` deletes group override and supports
+parameters:
+
+* `overrideid` - Quiz group override id (required)
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_delete_group_override&overrideid=10'
+
+{
+  "status": true
+}
+```
+
