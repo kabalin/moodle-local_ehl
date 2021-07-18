@@ -121,7 +121,7 @@ class local_ehl_course_backup extends external_api {
     /**
      * Return for getting backup file details.
      *
-     * @return external_files
+     * @return external_single_structure
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([

@@ -79,5 +79,12 @@ $functions = [
         'description' => 'Perform course backup',
         'type' => 'write',
         'capabilities' => 'moodle/backup:backupcourse',
+    ],
+    'local_ehl_course_restore_backup' => [
+        'classname' => \local_ehl\external\local_ehl_course_restore_backup::class,
+        'methodname' => 'execute',
+        'description' => 'Perform course restore from backup',
+        'type' => 'write',
+        'capabilities' => 'moodle/restore:restorecourse',
     ]
 ];
