@@ -14,6 +14,35 @@ Usage:
 sudo -u www-data /usr/bin/php local/ehl/cli/backup.php --courseid=2 -nu --destination=/tmp
 ```
 
+#### Backup webservice
+
+`local_ehl_course_backup` creates backup and supports parameters:
+
+* `courseid` -  Course id
+* `courseidnumber` - Course idnumber
+* `courseshortname` - Course shortname
+* `nousers` - Don't include user enrolment
+
+Either of 3 course params is required to determined course that will be backed
+up.
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_course_backup&courseid=25'
+
+{
+  "filesize": "36.3KB",
+  "fileurl": "http://moodle.local/webservice/pluginfile.php/356/backup/course/backup-moodle2-course-25-btc_1-20210717-2305.mbz"
+}
+```
+
+To retrieve the file, call `fileurl` with `token` param added:
+
+```
+$ curl "http://moodle.local/webservice/pluginfile.php/356/backup/course/backup-moodle2-course-25-btc_1-20210717-2305.mbz?token=e2add69a036c6a203ae4dc824eb89a64"
+```
+
 ### Restore
 
 This is a copy of restore script from `admin/cli/restore-backup.php` with following

@@ -72,5 +72,12 @@ $functions = [
         'description' => 'List group overrides',
         'type' => 'read',
         'capabilities' => 'mod/quiz:manageoverrides',
+    ],
+    'local_ehl_course_backup' => [
+        'classname' => \local_ehl\external\local_ehl_course_backup::class,
+        'methodname' => 'execute',
+        'description' => 'Perform course backup',
+        'type' => 'write',
+        'capabilities' => 'moodle/backup:backupcourse',
     ]
 ];
