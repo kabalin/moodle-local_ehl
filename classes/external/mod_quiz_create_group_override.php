@@ -104,7 +104,7 @@ class mod_quiz_create_group_override extends external_api {
         }
 
         // Check time.
-        if ($params['timeclose'] < $params['timeopen'] ) {
+        if ($params['timeopen'] !== 0 && $params['timeclose'] !== 0 && $params['timeclose'] < $params['timeopen'] ) {
             throw new \invalid_parameter_exception(get_string('closebeforeopen', 'quiz'));
         }
 
