@@ -23,7 +23,7 @@ sudo -u www-data /usr/bin/php local/ehl/cli/backup.php --courseid=2 -nu --destin
 * `courseshortname` - Course shortname
 * `nousers` - Don't include user enrolment
 
-Either of 3 course params is required to determined course that will be backed
+Either of 3 course params is required to determine course that will be backed
 up.
 
 CLI query example:
@@ -69,11 +69,11 @@ sudo -u www-data /usr/bin/php local/ehl/cli/restore_backup.php --file=/tmp/file.
 * `courseidnumber` - Course idnumber
 * `courseshortname` - Course shortname
 
-Either of 3 course params is required to determined course that will be
-owerwritten during restore. Specify `categoryid` if restoring as new course.
+Either of 3 course params is required to determine course that will be
+overwritten during restore. Specify `categoryid` if prefer restoring as new course.
 
-`fileitemid` is `itemid` from upload file webservice response, see [upload webservice documentation](https://docs.moodle.org/dev/Web_services_files_handling#File_upload) for
-more details.
+`fileitemid` is `itemid` from upload file webservice response that should be used to uploading backup file, see [upload webservice documentation](https://docs.moodle.org/dev/Web_services_files_handling#File_upload) for
+more details. 
 
 CLI query example:
 ```
