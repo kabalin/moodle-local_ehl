@@ -72,7 +72,7 @@ sudo -u www-data /usr/bin/php local/ehl/cli/restore_backup.php --file=/tmp/file.
 Either of 3 course params is required to determined course that will be
 owerwritten during restore. Specify `categoryid` if restoring as new course.
 
-`fileitemid` is `itemid` from upload file webservice response, see docs for
+`fileitemid` is `itemid` from upload file webservice response, see [upload webservice documentation](https://docs.moodle.org/dev/Web_services_files_handling#File_upload) for
 more details.
 
 CLI query example:
