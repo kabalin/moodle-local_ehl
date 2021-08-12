@@ -59,6 +59,32 @@ Usage:
 sudo -u www-data /usr/bin/php local/ehl/cli/restore_backup.php --file=/tmp/file.mbz --courseid=2
 ```
 
+#### Restore webservice
+
+`local_ehl_course_restore_backup` restores course backup and supports parameters:
+
+* `fileitemid` - File itemid (required)
+* `categoryid` - Category id to restore course into
+* `courseid` -  Course id
+* `courseidnumber` - Course idnumber
+* `courseshortname` - Course shortname
+
+Either of 3 course params is required to determined course that will be
+owerwritten during restore. Specify `categoryid` if restoring as new course.
+
+`fileitemid` is `itemid` from upload file webservice response, see docs for
+more details.
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_course_restore_backup&courseid=25&fileitemid=56744917'
+
+{
+  "status": true
+}
+```
+
 ### Quiz edit webservices
 
 There are three webservices each desinged for dedicated section of Quiz
