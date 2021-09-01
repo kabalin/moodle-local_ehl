@@ -104,18 +104,30 @@ class mod_quiz_update_group_override extends external_api {
         // Customise data. We only update values that were specified.
         $changes = [];
         if ($params['timeopen'] !== -1 && $params['timeopen'] != $override->timeopen) {
+            if ($params['timeopen'] === 0) {
+                $params['timeopen'] = null;
+            }
             $changes['timeopen'] = "{$override->timeopen} => " . $params['timeopen'];
             $override->timeopen = $params['timeopen'];
         }
         if ($params['timeclose'] !== -1 && $params['timeclose'] != $override->timeclose) {
+            if ($params['timeclose'] === 0) {
+                $params['timeclose'] = null;
+            }
             $changes['timeclose'] = "{$override->timeclose} => " . $params['timeclose'];
             $override->timeclose = $params['timeclose'];
         }
         if ($params['timelimit'] !== -1 && $params['timelimit'] != $override->timelimit) {
+            if ($params['timelimit'] === 0) {
+                $params['timelimit'] = null;
+            }
             $changes['timelimit'] = "{$override->timelimit} => " . $params['timelimit'];
             $override->timelimit = $params['timelimit'];
         }
         if ($params['attempts'] !== -1 && $params['attempts'] != $override->attempts) {
+            if ($params['attempts'] === 0) {
+                $params['attempts'] = null;
+            }
             $changes['attempts'] = "{$override->attempts} => " . $params['attempts'];
             $override->attempts = $params['attempts'];
         }
@@ -123,6 +135,12 @@ class mod_quiz_update_group_override extends external_api {
         if (!count($changes)) {
             // Nothing to change. New values are matching current ones.
             return ['status' => false];
+        }
+
+        // Check if we change anything.
+        if (is_null($override->timeopen) && is_null($override->timeclose) &&
+                is_null($override->timelimit) && is_null($override->attempts)) {
+            throw new \invalid_parameter_exception(get_string('nooverridedata', 'quiz'));
         }
 
         // Update override.

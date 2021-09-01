@@ -104,8 +104,8 @@ class mod_quiz_list_group_overrides extends external_api {
                     'groupid' => new external_value(PARAM_INT, 'group instance id'),
                     'timeopen' => new external_value(PARAM_INT, 'Open date in Unix time stamp', VALUE_OPTIONAL),
                     'timeclose' => new external_value(PARAM_INT, 'Close date in Unix time stamp', VALUE_OPTIONAL),
-                    'timelimit' => new external_value(PARAM_INT, 'Timelimit in seconds, 0 - disabled limit', VALUE_OPTIONAL),
-                    'attempts' => new external_value(PARAM_INT, 'Number of attempts allowed, 0 for unlimited', VALUE_OPTIONAL),
+                    'timelimit' => new external_value(PARAM_INT, 'Timelimit in seconds', VALUE_OPTIONAL),
+                    'attempts' => new external_value(PARAM_INT, 'Number of attempts allowed', VALUE_OPTIONAL),
                 ])
             )
         ]);

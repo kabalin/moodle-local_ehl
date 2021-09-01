@@ -107,10 +107,30 @@ class mod_quiz_create_group_override extends external_api {
         if ($params['timeopen'] !== 0 && $params['timeclose'] !== 0 && $params['timeclose'] < $params['timeopen'] ) {
             throw new \invalid_parameter_exception(get_string('closebeforeopen', 'quiz'));
         }
+        if ($params['timeopen'] === 0) {
+            $params['timeopen'] = null;
+        }
+        if ($params['timeclose'] === 0) {
+            $params['timeclose'] = null;
+        }
 
         // Check attempts.
         if ($params['attempts'] > QUIZ_MAX_ATTEMPT_OPTION) {
             throw new \invalid_parameter_exception('Invalid attempts value, it should not exceed ' . QUIZ_MAX_ATTEMPT_OPTION);
+        }
+        if ($params['attempts'] === 0) {
+            $params['attempts'] = null;
+        }
+
+        // Check timelimit.
+        if ($params['timelimit'] === 0) {
+            $params['timelimit'] = null;
+        }
+
+        // Check if we change anything.
+        if (is_null($params['timeopen']) && is_null($params['timeclose']) &&
+                is_null($params['attempts']) && is_null($params['timelimit'])) {
+            throw new \invalid_parameter_exception(get_string('nooverridedata', 'quiz'));
         }
 
         // Create override.
