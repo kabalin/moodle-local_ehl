@@ -114,20 +114,29 @@ class local_ehl_course_restore_backup extends external_api {
         $fp = get_file_packer('application/vnd.moodle.backup');
         $fp->extract_to_pathname(reset($draftfiles), $path);
 
-        // Restore.
-        try {
-            $rc = new \restore_controller($backupdir, $courseid, \backup::INTERACTIVE_NO,
-                \backup::MODE_GENERAL, $USER->id, $target);
-            $rc->execute_precheck();
-            $rc->execute_plan();
-            $rc->destroy();
-            fulldelete($path);
-        } catch (\Exception $e) {
-            fulldelete($path);
-            throw new \moodle_exception('generalexceptionmessage', 'error', '', $e->getMessage());
+        // Asynchronous restore.
+        $rc = new \restore_controller($backupdir, $courseid, \backup::INTERACTIVE_NO,
+            \backup::MODE_ASYNC, $USER->id, $target);
+
+        if (!$rc->execute_precheck()) {
+            $precheckresults = $rc->get_precheck_results();
+            if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
+                // If errors are found, terminate the import.
+                fulldelete($path);
+                $rc->destroy();
+                throw new \moodle_exception('generalexceptionmessage', 'error', '', implode('; ', $precheckresults['errors']));
+            }
         }
 
-        return ['status' => true];
+        // Create adhoc task for restore.
+        $restoreid = $rc->get_restoreid();
+        $asynctask = new \core\task\asynchronous_restore_task();
+        $asynctask->set_blocking(false);
+        $asynctask->set_custom_data(array('backupid' => $restoreid));
+        \core\task\manager::queue_adhoc_task($asynctask);
+
+        $rc->destroy();
+        return ['restoreid' => $restoreid, 'contextid' => $context->id];
     }
 
     /**
@@ -137,7 +146,8 @@ class local_ehl_course_restore_backup extends external_api {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'status' => new external_value(PARAM_BOOL, 'Success status'),
+            'restoreid' => new external_value(PARAM_ALPHANUMEXT, 'Restore id'),
+            'contextid' => new external_value(PARAM_INT, 'Context id'),
         ]);
     }
 }
