@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/ehl/db" VERSION="20220112" COMMENT="XMLDB file for Moodle local_ehl"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_ehl_restore" COMMENT="Schduled restores">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="unique id of the restore"/>
+        <FIELD NAME="callbackurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the restore was created"/>
+        <FIELD NAME="timeexecuted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="time the restore was executed"/>
+        <FIELD NAME="failurereason" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="error returned by webservice call"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

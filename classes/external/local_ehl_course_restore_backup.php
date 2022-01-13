@@ -47,6 +47,7 @@ class local_ehl_course_restore_backup extends external_api {
                 'courseid' => new external_value(PARAM_INT, 'Course id to restore into with content overwriting', VALUE_DEFAULT, 0),
                 'courseidnumber' => new external_value(PARAM_RAW, 'Course idnumber to restore into with content overwriting', VALUE_DEFAULT, ''),
                 'courseshortname' => new external_value(PARAM_RAW, 'Course shortname to restore into with content overwriting', VALUE_DEFAULT, ''),
+                'callbackurl' => new external_value(PARAM_RAW, 'Callback URL with JSON encoded payload', VALUE_DEFAULT, ''),
             ]
         );
     }
@@ -60,7 +61,7 @@ class local_ehl_course_restore_backup extends external_api {
      * @param bool $nousers
      * @return array
      */
-    public static function execute(int $fileitemid, int $categoryid, int $courseid, string $courseidnumber, string $courseshortname): array {
+    public static function execute(int $fileitemid, int $categoryid, int $courseid, string $courseidnumber, string $courseshortname, string $callbackurl): array {
         global $DB, $USER, $CFG;
         $params = self::validate_parameters(self::execute_parameters(), [
             'fileitemid' => $fileitemid,
@@ -68,7 +69,11 @@ class local_ehl_course_restore_backup extends external_api {
             'courseid' => $courseid,
             'courseidnumber' => $courseidnumber,
             'courseshortname' => $courseshortname,
+            'callbackurl' => $callbackurl,
         ]);
+
+        // Check URL validity and encode it.
+        $callbackurl = (new \moodle_url($params['callbackurl']))->out();
 
         // Check course or category exists.
         $target = \backup::TARGET_EXISTING_DELETING;
@@ -134,6 +139,14 @@ class local_ehl_course_restore_backup extends external_api {
         $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array('backupid' => $restoreid));
         \core\task\manager::queue_adhoc_task($asynctask);
+
+        // Store a payload record.
+        $restore = new \stdClass();
+        $restore->course = $courseid;
+        $restore->backupid = $restoreid;
+        $restore->callbackurl = $callbackurl;
+        $restore->timecreated = time();
+        $DB->insert_record('local_ehl_restore', $restore);
 
         $rc->destroy();
         return ['restoreid' => $restoreid, 'contextid' => $context->id];
