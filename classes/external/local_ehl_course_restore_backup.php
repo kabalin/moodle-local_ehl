@@ -72,6 +72,10 @@ class local_ehl_course_restore_backup extends external_api {
             'callbackurl' => $callbackurl,
         ]);
 
+        if (!get_config('local_ehl', 'callbackapiheader') || !get_config('local_ehl', 'callbackapikey')) {
+            throw new \moodle_exception('Callback API header or key are missing in plugin settings.');
+        }
+
         // Check URL validity and encode it.
         $callbackurl = (new \moodle_url($params['callbackurl']))->out();
 
@@ -143,7 +147,7 @@ class local_ehl_course_restore_backup extends external_api {
         // Store a payload record.
         $restore = new \stdClass();
         $restore->course = $courseid;
-        $restore->backupid = $restoreid;
+        $restore->backupdir = $backupdir;
         $restore->callbackurl = $callbackurl;
         $restore->timecreated = time();
         $DB->insert_record('local_ehl_restore', $restore);

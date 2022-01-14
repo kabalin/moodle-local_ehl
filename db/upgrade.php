@@ -33,7 +33,7 @@ function xmldb_local_ehl_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2022011201) {
+    if ($oldversion < 2022011203) {
 
         // Define table local_ehl_restore to be created.
         $table = new xmldb_table('local_ehl_restore');
@@ -41,7 +41,7 @@ function xmldb_local_ehl_upgrade($oldversion) {
         // Adding fields to table local_ehl_restore.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('backupid', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('backupdir', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('callbackurl', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timeexecuted', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
@@ -55,6 +55,6 @@ function xmldb_local_ehl_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        upgrade_plugin_savepoint(true, 2022011201, 'local', 'ehl');
+        upgrade_plugin_savepoint(true, 2022011203, 'local', 'ehl');
     }
 }

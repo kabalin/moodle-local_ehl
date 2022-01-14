@@ -23,3 +23,7 @@
  */
 
 $string['pluginname'] = 'EHL Moodle customisation';
+$string['restorewebservice'] = 'Restore webservice';
+$string['callbackapiheader'] = 'Callback API header';
+$string['callbackapiheader_desc'] = 'Header to be used with callback, it will contain the key specified in API key setting below';
+$string['callbackapikey'] = 'Callback API key';
