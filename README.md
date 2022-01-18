@@ -61,13 +61,14 @@ sudo -u www-data /usr/bin/php local/ehl/cli/restore_backup.php --file=/tmp/file.
 
 #### Restore webservice
 
-`local_ehl_course_restore_backup` restores course backup and supports parameters:
+`local_ehl_course_restore_backup` schedules asyncronous course backup restore and supports parameters:
 
 * `fileitemid` - File itemid (required)
 * `categoryid` - Category id to restore course into
 * `courseid` -  Course id
 * `courseidnumber` - Course idnumber
 * `courseshortname` - Course shortname
+* `callbackurl` - Callback URL used for API call on restore success
 
 Either of 3 course params is required to determine course that will be
 overwritten during restore. Specify `categoryid` if prefer restoring as new course.
@@ -81,9 +82,30 @@ $ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
 --data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_course_restore_backup&courseid=25&fileitemid=56744917'
 
 {
-  "status": true
+  "restoreid": "539d67f113d228ae7ce743010d189b83",
+  "contextid": 811
 }
 ```
+
+Returned data can be optionally used to query restore status using core
+webservice `core_backup_get_async_backup_progress`:
+
+```
+$ curl 'http://moodle.local/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=core_backup_get_async_backup_progress&contextid=811&backupid=539d67f113d228ae7ce743010d189b83'
+```
+
+**Note on callbackurl**
+
+When `callbackurl` is provided, it will be used to make GET request with
+configured API header and key (see plugin configuration in Site administration
+-> Plugins -> Local plugins -> EHL Moodle customisation) when restore has been
+completed (`course_restored` event is triggered) on the background (run on
+cron using standard core functionality for asyncronous restore).  The special
+Callback Logs page has been designed to make easier to identify issues with
+restore or callback execution, it shows pending restores as well as failure
+reason for those restores where API callback rusulted in error. Successful
+restores or those made without callbackurl param are not listed in the logs.
 
 ### Quiz edit webservices
 
