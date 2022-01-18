@@ -24,11 +24,21 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($hassiteconfig) {
-    global $CFG;
-    $settings = new admin_settingpage('local_ehl', new lang_string('pluginname', 'local_ehl'));
-    $ADMIN->add('localplugins', $settings);
+// New category.
+$ADMIN->add('localplugins', new admin_category('localehl',
+    new lang_string('pluginname', 'local_ehl')));
 
+// Add custom page for logs.
+$logs = new admin_externalpage('restorecallbacklogs',
+        new lang_string('restorecallbacklogs', 'local_ehl'),
+        new moodle_url('/local/ehl/restorelogs.php'));
+$ADMIN->add('localehl', $logs);
+
+// Add general settings.
+$settings = new admin_settingpage('local_ehl', new lang_string('settings'));
+$ADMIN->add('localehl', $settings);
+
+if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('local_ehl/restorewebservice',
             new lang_string('restorewebservice', 'local_ehl'), ''));
 
@@ -40,3 +50,5 @@ if ($hassiteconfig) {
             new lang_string('callbackapikey', 'local_ehl'), '', '', PARAM_ALPHANUM));
 }
 
+// Tell core we already added the settings structure.
+$settings = null;

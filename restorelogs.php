@@ -15,20 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for local_ehl
+ * Restore logs listing page
  *
  * @package   local_ehl
- * @copyright 2021 Ecole hôtelière de Lausanne {@link https://www.ehl.edu/}
+ * @copyright 2022 Ecole hôtelière de Lausanne {@link https://www.ehl.edu/}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['callbackapiheader'] = 'Callback API header';
-$string['callbackapiheader_desc'] = 'Header to be used with callback, it will contain the key specified in API key setting below';
-$string['callbackapikey'] = 'Callback API key';
-$string['failurereason'] = 'Failure reason';
-$string['pluginname'] = 'EHL Moodle customisation';
-$string['restorecallbacklogs'] = 'Restore callback logs';
-$string['restoreinprogress'] = 'Restore in progress';
-$string['restorewebservice'] = 'Restore webservice';
-$string['timecreated'] = 'Created time';
-$string['timeexecuted'] = 'Executed time';
+require_once('../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+
+admin_externalpage_setup('restorecallbacklogs');
+$PAGE->set_context(context_system::instance());
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('restorecallbacklogs', 'local_ehl'));
+$table = new \local_ehl\output\restore_table();
+$table->define_baseurl('restorelogs.php');
+$table->out(25, false);
+echo $OUTPUT->footer();
