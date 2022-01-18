@@ -38,38 +38,40 @@ class observer {
     public static function course_restored(\core\event\course_restored $event) {
         global $DB, $CFG;
         if ($restore = $DB->get_record('local_ehl_restore', ['course' => $event->courseid])) {
-            $curl = new \curl();
-            $curl->setopt(array('CURLOPT_TIMEOUT' => 10, 'CURLOPT_CONNECTTIMEOUT' => 10));
-
-            // Add header.
-            $header = get_config('local_ehl', 'callbackapiheader');
-            $key = get_config('local_ehl', 'callbackapikey');
-            if ($header && $key) {
-                $curl->setHeader("{$header}: {$key}");
-            }
-
-            // Execute request.
-            $restore->timeexecuted = time();
-            $response = $curl->get($restore->callbackurl);
-            
-            // Log errors.
-            $info = $curl->get_info();
-            if ($curlerrno = $curl->get_errno()) {
-                $restore->failurereason = "Unexpected response, CURL error number: $curlerrno Error: {$curl->error}";
-            } else if ($info['http_code'] != 200) {
-                $restore->failurereason = "Unexpected response, HTTP code: " . $info['httpcode'] . " Response: $response";
-            }
-
-            // Failed.
-            if ($restore->failurereason) {
-                debugging($restore->failurereason);
-                $DB->update_record('local_ehl_restore', $restore);
-                return;
-            }
-
-            // Success. Clean up.
+            // Clean up files.
             $path = $CFG->tempdir . DIRECTORY_SEPARATOR . "backup" . DIRECTORY_SEPARATOR . $restore->backupdir;
             fulldelete($path);
+
+            if ($restore->callbackurl) {
+                // Execute callback.
+                $curl = new \curl();
+                $curl->setopt(array('CURLOPT_TIMEOUT' => 10, 'CURLOPT_CONNECTTIMEOUT' => 10));
+
+                // Add header.
+                $header = get_config('local_ehl', 'callbackapiheader');
+                $key = get_config('local_ehl', 'callbackapikey');
+                if ($header && $key) {
+                    $curl->setHeader("{$header}: {$key}");
+                }
+
+                // Execute GET request.
+                $restore->timeexecuted = time();
+                $response = $curl->get($restore->callbackurl);
+
+                // Log errors.
+                $info = $curl->get_info();
+                if ($curlerrno = $curl->get_errno()) {
+                    $restore->failurereason = "Unexpected response, CURL error number: $curlerrno Error: {$curl->error}";
+                } else if ($info['http_code'] != 200) {
+                    $restore->failurereason = "Unexpected response, HTTP code: " . $info['httpcode'] . " Response: $response";
+                }
+                if ($restore->failurereason) {
+                    debugging($restore->failurereason);
+                    $DB->update_record('local_ehl_restore', $restore);
+                    return;
+                }
+            }
+            // Clean up record.
             $DB->delete_records('local_ehl_restore', ['id' => $restore->id]);
         }
     }

@@ -77,7 +77,9 @@ class local_ehl_course_restore_backup extends external_api {
         }
 
         // Check URL validity and encode it.
-        $callbackurl = (new \moodle_url($params['callbackurl']))->out();
+        if ($callbackurl) {
+            $callbackurl = (new \moodle_url($params['callbackurl']))->out();
+        }
 
         // Check course or category exists.
         $target = \backup::TARGET_EXISTING_DELETING;
@@ -144,7 +146,8 @@ class local_ehl_course_restore_backup extends external_api {
         $asynctask->set_custom_data(array('backupid' => $restoreid));
         \core\task\manager::queue_adhoc_task($asynctask);
 
-        // Store a payload record.
+        // Store a payload record. We register a job even if no callback is provided
+        // to delete file when restore is completed.
         $restore = new \stdClass();
         $restore->course = $courseid;
         $restore->backupdir = $backupdir;

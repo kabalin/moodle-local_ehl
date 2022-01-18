@@ -35,7 +35,7 @@ class restore_table extends \table_sql {
     public function __construct() {
         parent::__construct('local_ehl_restore');
 
-        $this->set_sql('r.*, c.shortname', '{local_ehl_restore} r, {course} c', 'r.course = c.id', []);
+        $this->set_sql('r.*, c.shortname', '{local_ehl_restore} r JOIN {course} c ON (r.course = c.id)', "r.callbackurl != ''", []);
         $this->define_columns([
             'course',
             'timecreated',
@@ -49,7 +49,7 @@ class restore_table extends \table_sql {
             get_string('failurereason', 'local_ehl'),
         ]);
         $this->collapsible(true);
-        $this->sortable(true, 'timecreated');
+        $this->sortable(true, 'timecreated', SORT_DESC);
         $this->no_sorting('failurereason');
     }
 
