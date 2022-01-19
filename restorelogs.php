@@ -28,9 +28,22 @@ require_once($CFG->libdir.'/adminlib.php');
 admin_externalpage_setup('restorecallbacklogs');
 $PAGE->set_context(context_system::instance());
 
+$action = optional_param('action', '', PARAM_ALPHA);
+if ($action == 'clear') {
+    require_sesskey();
+    $DB->delete_records_select('local_ehl_restore', "timeexecuted IS NOT NULL");
+    redirect($PAGE->url);
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('restorecallbacklogs', 'local_ehl'));
 $table = new \local_ehl\output\restore_table();
 $table->define_baseurl('restorelogs.php');
 $table->out(25, false);
+
+$clearurl = new \moodle_url($PAGE->url, ['action' => 'clear']);
+$clearbutton = new single_button($clearurl, get_string('clearlogs', 'local_ehl'));
+$clearbutton->add_confirm_action(get_string('clearlogsconfirm', 'local_ehl'));
+echo $OUTPUT->render($clearbutton);
+
 echo $OUTPUT->footer();
