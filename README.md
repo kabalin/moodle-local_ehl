@@ -165,6 +165,28 @@ $ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
 }
 ```
 
+#### local_ehl_mod_quiz_update_appearance_settings
+
+`local_ehl_mod_quiz_update_appearance_settings` updates grading settings and support
+parameters:
+
+* `quizid` - Quiz instance id (required)
+* `showuserpicture` - Show user's image, 0 - none, 1 - small, 2 - large
+* `decimalpoints` - Decimal places in grades
+* `questiondecimalpoints` - Decimal places in question grades (set -1 for "same as in overall grades")
+* `showblocks` - Show blocks during quiz attempts, 0 - don't show, 1 - show
+
+CLI query example:
+```
+$ curl 'https://SITENAME/webservice/rest/server.php?moodlewsrestformat=json' \
+--data 'wstoken=e2add69a036c6a203ae4dc824eb89a64&wsfunction=local_ehl_mod_quiz_update_appearance_settings&quizid=3&showblocks=1'
+
+{
+  "status": true,
+  "changes": "{\"showblocks\":\" => 1\"}"
+}
+```
+
 #### local_ehl_mod_quiz_update_review_settings
 
 `local_ehl_mod_quiz_update_review_settings` updates grading settings and support

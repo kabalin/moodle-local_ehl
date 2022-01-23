@@ -45,6 +45,13 @@ $functions = [
         'type' => 'write',
         'capabilities' => 'moodle/course:manageactivities',
     ],
+    'local_ehl_mod_quiz_update_appearance_settings' => [
+        'classname' => \local_ehl\external\mod_quiz_update_appearance_settings::class,
+        'methodname' => 'execute',
+        'description' => 'Update quiz appearance settings',
+        'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities',
+    ],
     'local_ehl_mod_quiz_create_group_override' => [
         'classname' => \local_ehl\external\mod_quiz_create_group_override::class,
         'methodname' => 'execute',
