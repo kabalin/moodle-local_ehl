@@ -47,16 +47,21 @@ class observer {
                 $curl = new \curl();
                 $curl->setopt(array('CURLOPT_TIMEOUT' => 10, 'CURLOPT_CONNECTTIMEOUT' => 10));
 
-                // Add header.
+                // Add auth header.
                 $header = get_config('local_ehl', 'callbackapiheader');
                 $key = get_config('local_ehl', 'callbackapikey');
                 if ($header && $key) {
                     $curl->setHeader("{$header}: {$key}");
                 }
 
-                // Execute GET request.
+                // Set content type if we have JSON encoded payload.
+                if ($restore->callbackpayload) {
+                    $curl->setHeader(['Cache-Control: no-cache', 'Content-Type: application/json']);
+                }
+
+                // Execute POST request.
                 $restore->timeexecuted = time();
-                $response = $curl->get($restore->callbackurl);
+                $response = $curl->post($restore->callbackurl, $restore->callbackpayload);
 
                 // Log errors.
                 $info = $curl->get_info();

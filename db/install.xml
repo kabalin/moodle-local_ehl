@@ -10,6 +10,7 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="backupdir" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="backup directory"/>
         <FIELD NAME="callbackurl" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="callbackpayload" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the restore was created"/>
         <FIELD NAME="timeexecuted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="time the restore was executed"/>
         <FIELD NAME="failurereason" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="error returned by API callback"/>

@@ -58,5 +58,20 @@ function xmldb_local_ehl_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022011203, 'local', 'ehl');
     }
 
+    if ($oldversion < 2022012400) {
+
+        // Define table local_ehl_restore to be created.
+        $table = new xmldb_table('local_ehl_restore');
+
+        $field = new xmldb_field('callbackpayload', XMLDB_TYPE_TEXT, null, null, null, null, null, 'callbackurl');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2022012400, 'local', 'ehl');
+    }
+
     return true;
 }

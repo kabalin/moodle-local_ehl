@@ -47,7 +47,8 @@ class local_ehl_course_restore_backup extends external_api {
                 'courseid' => new external_value(PARAM_INT, 'Course id to restore into with content overwriting', VALUE_DEFAULT, 0),
                 'courseidnumber' => new external_value(PARAM_RAW, 'Course idnumber to restore into with content overwriting', VALUE_DEFAULT, ''),
                 'courseshortname' => new external_value(PARAM_RAW, 'Course shortname to restore into with content overwriting', VALUE_DEFAULT, ''),
-                'callbackurl' => new external_value(PARAM_RAW, 'Callback URL with JSON encoded payload', VALUE_DEFAULT, ''),
+                'callbackurl' => new external_value(PARAM_RAW, 'Callback URL', VALUE_DEFAULT, ''),
+                'callbackpayload' => new external_value(PARAM_RAW, 'JSON encoded payload', VALUE_DEFAULT, ''),
             ]
         );
     }
@@ -61,7 +62,8 @@ class local_ehl_course_restore_backup extends external_api {
      * @param bool $nousers
      * @return array
      */
-    public static function execute(int $fileitemid, int $categoryid, int $courseid, string $courseidnumber, string $courseshortname, string $callbackurl): array {
+    public static function execute(int $fileitemid, int $categoryid, int $courseid, string $courseidnumber,
+            string $courseshortname, string $callbackurl, string $callbackpayload): array {
         global $DB, $USER, $CFG;
         $params = self::validate_parameters(self::execute_parameters(), [
             'fileitemid' => $fileitemid,
@@ -70,6 +72,7 @@ class local_ehl_course_restore_backup extends external_api {
             'courseidnumber' => $courseidnumber,
             'courseshortname' => $courseshortname,
             'callbackurl' => $callbackurl,
+            'callbackpayload' => $callbackpayload,
         ]);
 
         if (!get_config('local_ehl', 'callbackapiheader') || !get_config('local_ehl', 'callbackapikey')) {
@@ -79,6 +82,14 @@ class local_ehl_course_restore_backup extends external_api {
         // Check URL validity and encode it.
         if ($callbackurl) {
             $callbackurl = (new \moodle_url($params['callbackurl']))->out();
+        }
+
+        // Check payload.
+        if ($params['callbackpayload'] && !$callbackurl) {
+            throw new \invalid_parameter_exception('Supplying callbackpayload requires callbackurl to be defined');
+        }
+        if ($params['callbackpayload'] && json_decode($params['callbackpayload']) === null) {
+            throw new \invalid_parameter_exception('callbackpayload contains invalid JSON. Error:' . json_last_error_msg());
         }
 
         // Check course or category exists.
@@ -152,6 +163,7 @@ class local_ehl_course_restore_backup extends external_api {
         $restore->course = $courseid;
         $restore->backupdir = $backupdir;
         $restore->callbackurl = $callbackurl;
+        $restore->callbackpayload = $params['callbackpayload'];
         $restore->timecreated = time();
         $DB->insert_record('local_ehl_restore', $restore);
 

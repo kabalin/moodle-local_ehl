@@ -69,6 +69,7 @@ sudo -u www-data /usr/bin/php local/ehl/cli/restore_backup.php --file=/tmp/file.
 * `courseidnumber` - Course idnumber
 * `courseshortname` - Course shortname
 * `callbackurl` - Callback URL used for API call on restore success
+* `callbackpayload` - JSON encoded palyload used in callback call body.
 
 Either of 3 course params is required to determine course that will be
 overwritten during restore. Specify `categoryid` if prefer restoring as new course.
@@ -97,15 +98,16 @@ $ curl 'http://moodle.local/webservice/rest/server.php?moodlewsrestformat=json' 
 
 **Note on callbackurl**
 
-When `callbackurl` is provided, it will be used to make GET request with
+When `callbackurl` is provided, it will be used to make POST request with
 configured API header and key (see plugin configuration in Site administration
--> Plugins -> Local plugins -> EHL Moodle customisation) when restore has been
-completed (`course_restored` event is triggered) on the background (run on
-cron using standard core functionality for asyncronous restore).  The special
-Callback Logs page has been designed to make easier to identify issues with
-restore or callback execution, it shows pending restores as well as failure
-reason for those restores where API callback rusulted in error. Successful
-restores or those made without callbackurl param are not listed in the logs.
+-> Plugins -> Local plugins -> EHL Moodle customisation) and optional JSON
+payload defined in `callbackpayload` attribute when restore has been completed
+(`course_restored` event is triggered) on the background (run on cron using
+standard core functionality for asyncronous restore).  The special Callback
+Logs page has been designed to make easier to identify issues with restore or
+callback execution, it shows pending restores as well as failure reason for
+those restores where API callback rusulted in error. Successful restores or
+those made without callbackurl param are not listed in the logs.
 
 ### Quiz edit webservices
 
