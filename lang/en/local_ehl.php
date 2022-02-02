@@ -25,6 +25,7 @@
 $string['callbackapiheader'] = 'Callback API header';
 $string['callbackapiheader_desc'] = 'Header to be used with callback, it will contain the key specified in API key setting below';
 $string['callbackapikey'] = 'Callback API key';
+$string['callbacktimeout'] = 'Callback timeout';
 $string['clearlogs'] = 'Clear logs';
 $string['clearlogsconfirm'] = 'This will clear all completed callback logs.';
 $string['failurereason'] = 'Failure reason';

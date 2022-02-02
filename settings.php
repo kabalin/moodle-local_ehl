@@ -48,6 +48,10 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('local_ehl/callbackapikey',
             new lang_string('callbackapikey', 'local_ehl'), '', '', PARAM_ALPHANUM));
+
+    $settings->add(new admin_setting_configtext('local_ehl/callbacktimeout',
+            new lang_string('callbacktimeout', 'local_ehl'), '', 10, PARAM_INT));
+
 }
 
 // Tell core we already added the settings structure.

@@ -45,7 +45,11 @@ class observer {
             if ($restore->callbackurl) {
                 // Execute callback.
                 $curl = new \curl();
-                $curl->setopt(array('CURLOPT_TIMEOUT' => 10, 'CURLOPT_CONNECTTIMEOUT' => 10));
+
+                // Set timeout.
+                if ($timeout = get_config('local_ehl', 'callbacktimeout')) {
+                    $curl->setopt(array('CURLOPT_TIMEOUT' => $timeout, 'CURLOPT_CONNECTTIMEOUT' => $timeout));
+                }
 
                 // Add auth header.
                 $header = get_config('local_ehl', 'callbackapiheader');
