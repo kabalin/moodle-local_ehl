@@ -71,8 +71,8 @@ class observer {
                 $info = $curl->get_info();
                 if ($curlerrno = $curl->get_errno()) {
                     $restore->failurereason = "Unexpected response, CURL error number: $curlerrno Error: {$curl->error}";
-                } else if ($info['http_code'] != 200) {
-                    $restore->failurereason = "Unexpected response, HTTP code: " . $info['httpcode'] . " Response: $response";
+                } else if ((int)$info['http_code'] >= 400) {
+                    $restore->failurereason = "Unexpected response, HTTP code: " . $info['http_code'] . " Response: $response";
                 }
                 if ($restore->failurereason) {
                     debugging($restore->failurereason);

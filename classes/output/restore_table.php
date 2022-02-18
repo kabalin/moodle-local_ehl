@@ -60,7 +60,7 @@ class restore_table extends \table_sql {
      * @return string
      */
     public function col_course($row) {
-        $courseurl = new \moodle_url('course/view.php', ['id' => $row->course]);
+        $courseurl = new \moodle_url('/course/view.php', ['id' => $row->course]);
         return \html_writer::link($courseurl, format_string($row->shortname,
                 true, \context_course::instance($row->course)));
     }
