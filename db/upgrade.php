@@ -73,7 +73,7 @@ function xmldb_local_ehl_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022012400, 'local', 'ehl');
     }
 
-    if ($oldversion < 2023032600) {
+    if ($oldversion < 2023032602) {
 
         // Define table local_ehl_restore to be created.
         $table = new xmldb_table('local_ehl_restore');
@@ -85,7 +85,14 @@ function xmldb_local_ehl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2023032600, 'local', 'ehl');
+        $field = new xmldb_field('failed', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2023032602, 'local', 'ehl');
     }
 
     return true;

@@ -36,7 +36,7 @@ class restore_table extends \table_sql {
     public function __construct() {
         parent::__construct('local_ehl_restore');
 
-        $this->set_sql('r.*, c.shortname', '{local_ehl_restore} r JOIN {course} c ON (r.course = c.id)', "r.callbackurl != ''", []);
+        $this->set_sql('r.*, c.shortname', '{local_ehl_restore} r LEFT JOIN {course} c ON (r.course = c.id)', "1=1", []);
         $this->define_columns([
             'course',
             'timecreated',
@@ -63,9 +63,13 @@ class restore_table extends \table_sql {
      * @return string
      */
     public function col_course($row) {
-        $courseurl = new \moodle_url('/course/view.php', ['id' => $row->course]);
-        return \html_writer::link($courseurl, format_string($row->shortname,
-                true, \context_course::instance($row->course)));
+        if ($row->shortname) {
+            $courseurl = new \moodle_url('/course/view.php', ['id' => $row->course]);
+            return \html_writer::link($courseurl, format_string($row->shortname,
+                    true, \context_course::instance($row->course)));
+        } else {
+            return get_string('coursedoesnotexist', 'local_ehl', $row->course);
+        }
     }
 
     /**
@@ -85,14 +89,20 @@ class restore_table extends \table_sql {
      * @return string
      */
     public function col_restorestatus($row) {
+        global $DB;
         $results = \backup_controller_dbops::get_progress($row->restoreid);
-        if ($results['status'] == \backup::STATUS_AWAITING) {
+        $restorestatus = (int) $results['status'];
+        if ($restorestatus === \backup::STATUS_AWAITING) {
             return get_string('restorestatusawaiting', 'local_ehl');
-        } else if ($results['status'] == \backup::STATUS_EXECUTING) {
+        } else if ($restorestatus === \backup::STATUS_EXECUTING) {
             return get_string('restorestatusexecuting', 'local_ehl', round((float) $results['progress']));
-        } else if ($results['status'] == \backup::STATUS_FINISHED_OK) {
+        } else if ($restorestatus === \backup::STATUS_FINISHED_OK) {
             return get_string('restorestatuscompleted', 'local_ehl');
-        } else if ($results['status'] == \backup::STATUS_FINISHED_ERR) {
+        } else if ($restorestatus === \backup::STATUS_FINISHED_ERR) {
+            // If we encounter restore error, course_restored event will never be triggered.
+            // We have to mark failed earlier.
+            $row->failed = 1;
+            $DB->update_record('local_ehl_restore', $row);
             return get_string('restorestatuserror', 'local_ehl');;
         }
     }

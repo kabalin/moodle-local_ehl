@@ -28,6 +28,7 @@ $string['callbackapikey'] = 'Callback API key';
 $string['callbacktimeout'] = 'Callback timeout';
 $string['clearlogs'] = 'Clear logs';
 $string['clearlogsconfirm'] = 'This will clear all completed callback logs.';
+$string['coursedoesnotexist'] = 'Delted course ({$a})';
 $string['failurereason'] = 'Failure reason';
 $string['pluginname'] = 'EHL Moodle customisation';
 $string['restorecallbacklogs'] = 'Restore callback logs';

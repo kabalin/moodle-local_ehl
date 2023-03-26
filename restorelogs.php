@@ -31,7 +31,7 @@ $PAGE->set_context(context_system::instance());
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action == 'clear') {
     require_sesskey();
-    $DB->delete_records_select('local_ehl_restore', "timeexecuted IS NOT NULL");
+    $DB->delete_records_select('local_ehl_restore', "failed = 1");
     redirect($PAGE->url);
 }
 

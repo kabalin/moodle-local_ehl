@@ -76,6 +76,7 @@ class observer {
                 }
                 if ($restore->failurereason) {
                     debugging($restore->failurereason);
+                    $restore->failed = 1;
                     $DB->update_record('local_ehl_restore', $restore);
                     return;
                 }
