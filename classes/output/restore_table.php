@@ -19,6 +19,7 @@ namespace local_ehl\output;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
 /**
  * Pending restores table class.
@@ -39,12 +40,14 @@ class restore_table extends \table_sql {
         $this->define_columns([
             'course',
             'timecreated',
+            'restorestatus',
             'timeexecuted',
             'failurereason'
         ]);
         $this->define_headers([
             get_string('course'),
             get_string('timecreated', 'local_ehl'),
+            get_string('restorestatus', 'local_ehl'),
             get_string('timeexecuted', 'local_ehl'),
             get_string('failurereason', 'local_ehl'),
         ]);
@@ -66,7 +69,7 @@ class restore_table extends \table_sql {
     }
 
     /**
-     * Generate the time created column.
+     * Generate the time restore task created column.
      *
      * @param \stdClass $row.
      * @return string
@@ -76,7 +79,26 @@ class restore_table extends \table_sql {
     }
 
     /**
-     * Generate the time executed column.
+     * Generate the restore status column.
+     *
+     * @param \stdClass $row.
+     * @return string
+     */
+    public function col_restorestatus($row) {
+        $results = \backup_controller_dbops::get_progress($row->restoreid);
+        if ($results['status'] == \backup::STATUS_AWAITING) {
+            return get_string('restorestatusawaiting', 'local_ehl');
+        } else if ($results['status'] == \backup::STATUS_EXECUTING) {
+            return get_string('restorestatusexecuting', 'local_ehl', round((float) $results['progress']));
+        } else if ($results['status'] == \backup::STATUS_FINISHED_OK) {
+            return get_string('restorestatuscompleted', 'local_ehl');
+        } else if ($results['status'] == \backup::STATUS_FINISHED_ERR) {
+            return get_string('restorestatuserror', 'local_ehl');;
+        }
+    }
+
+    /**
+     * Generate the time callback executed column.
      *
      * @param \stdClass $row.
      * @return string
@@ -85,7 +107,6 @@ class restore_table extends \table_sql {
         if ($row->timeexecuted) {
             return userdate($row->timeexecuted, get_string('strftimedatetimeshort'));
         }
-        return get_string('restoreinprogress', 'local_ehl');
     }
 
     /**

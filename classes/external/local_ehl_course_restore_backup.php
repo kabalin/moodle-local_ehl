@@ -165,6 +165,7 @@ class local_ehl_course_restore_backup extends external_api {
         $restore->callbackurl = $callbackurl;
         $restore->callbackpayload = $params['callbackpayload'];
         $restore->timecreated = time();
+        $restore->restoreid = $restoreid;
         $DB->insert_record('local_ehl_restore', $restore);
 
         $rc->destroy();
