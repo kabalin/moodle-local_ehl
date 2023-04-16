@@ -14,6 +14,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="time the restore was created"/>
         <FIELD NAME="timeexecuted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="time the restore was executed"/>
         <FIELD NAME="failurereason" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="error returned by API callback"/>
+        <FIELD NAME="restoreid" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="restore id hash"/>
+        <FIELD NAME="failed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="restore failed status"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
