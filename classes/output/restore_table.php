@@ -90,7 +90,13 @@ class restore_table extends \table_sql {
      */
     public function col_restorestatus($row) {
         global $DB;
-        $results = \backup_controller_dbops::get_progress($row->restoreid);
+        try {
+            $results = \backup_controller_dbops::get_progress($row->restoreid);
+        } catch (\Exception $e) {
+            // Controller is missing.
+            return get_string('restorestatusunknown', 'local_ehl');
+        }
+
         $restorestatus = (int) $results['status'];
         if ($restorestatus === \backup::STATUS_AWAITING) {
             return get_string('restorestatusawaiting', 'local_ehl');

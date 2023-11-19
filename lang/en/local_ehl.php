@@ -38,6 +38,7 @@ $string['restorestatusawaiting'] = 'Awaiting';
 $string['restorestatuscompleted'] = 'Completed';
 $string['restorestatuserror'] = 'Failed';
 $string['restorestatusexecuting'] = 'In progress {$a}%';
+$string['restorestatusunknown'] = 'Unknown (missing data)';
 $string['restorewebservice'] = 'Restore webservice';
 $string['timecreated'] = 'Restore created time';
 $string['timeexecuted'] = 'Callback executed time';
