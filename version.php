@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023111900;
-$plugin->requires  = 2019052000; // Requires Moodle 3.7.
+$plugin->version   = 2025060700;
+$plugin->requires  = 2024100700; // Requires Moodle 4.5.
 $plugin->component = 'local_ehl';

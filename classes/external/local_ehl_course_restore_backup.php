@@ -16,12 +16,10 @@
 
 namespace local_ehl\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 require_once($CFG->dirroot . "/backup/util/includes/restore_includes.php");
 
@@ -102,7 +100,7 @@ class local_ehl_course_restore_backup extends external_api {
             $courseid = $DB->get_field('course', 'id', ['idnumber' => $params['courseidnumber']]);
         } else if ($params['categoryid']) {
             if (!$categoryid = $DB->get_field('course_categories', 'id', ['id' => $params['categoryid']])) {
-                throw new \invalid_parameter_exception(print_error('invalidcategoryid'));
+                throw new \invalid_parameter_exception(get_string('invalidcategoryid', 'error'));
             }
             // Validate category context.
             $context = \context_coursecat::instance($categoryid);
@@ -121,7 +119,7 @@ class local_ehl_course_restore_backup extends external_api {
             self::validate_context($context);
             require_capability('moodle/restore:restorecourse', $context);
         } else {
-            throw new \invalid_parameter_exception(print_error('invalidcourse'));
+            throw new \invalid_parameter_exception(get_string('invalidcourse', 'error'));
         }
 
         $usercontext = \context_user::instance($USER->id);

@@ -16,12 +16,10 @@
 
 namespace local_ehl\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 
@@ -78,7 +76,7 @@ class local_ehl_course_backup extends external_api {
         }
 
         if (!$course) {
-            throw new \invalid_parameter_exception(print_error('invalidcourse'));
+            throw new \invalid_parameter_exception(get_string('invalidcourse', 'error'));
         }
 
         // Validate context.

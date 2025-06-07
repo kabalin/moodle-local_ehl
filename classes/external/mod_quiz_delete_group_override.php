@@ -16,12 +16,10 @@
 
 namespace local_ehl\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -64,6 +62,7 @@ class mod_quiz_delete_group_override extends external_api {
         $override = $DB->get_record('quiz_overrides', array('id' => $params['overrideid']));
         $cm = get_coursemodule_from_instance('quiz', $override->quiz, 0, false, MUST_EXIST);
         $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
         $context = \context_module::instance($cm->id);
 
@@ -75,12 +74,15 @@ class mod_quiz_delete_group_override extends external_api {
 
         // Check group is accessible.
         if (!groups_group_visible($override->groupid, $course, $cm)) {
-            throw new \invalid_parameter_exception(print_error('invalidoverrideid', 'quiz'));
+            throw new \invalid_parameter_exception(get_string('invalidoverrideid', 'quiz'));
         }
-        
-        $result = quiz_delete_override($quiz, $override->id);
 
-        return ['status' => $result];
+        $quizsettings = \mod_quiz\quiz_settings::create($quiz->id);
+        $quizsettings->get_override_manager()->delete_overrides_by_id(
+            ids: [$override->id]
+        );
+
+        return ['status' => true];
     }
 
     /**
