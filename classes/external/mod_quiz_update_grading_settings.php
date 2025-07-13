@@ -105,27 +105,11 @@ class mod_quiz_update_grading_settings extends external_api {
             return ['status' => false];
         }
 
-        if ($data->availabilityconditionsjson === null) {
-            // Null is stored in DB for empty availability tree.
-            // Set to empty string to make validation happy, normally JS sets this empty tree JSON in the web form.
-            $data->availabilityconditionsjson = '';
-        }
-        // Get form instance.
+        // Use form to preprocess and format data.
         $mform = new \local_ehl\form\mod_quiz_mod_form($data, $cw->section, $cm, $course);
         $mform->set_data($data);
-
-        // Validate form.
-        if (!$mform->is_validated()) {
-            $errors = $mform->get_quick_form()->_errors;
-            $errordescr = [];
-            foreach ($errors as $key => $value) {
-                $errordescr[] = $key.' - '.$value;
-            }
-            throw new \invalid_parameter_exception("Invalid parameters: " . implode(';', $errordescr));
-        }
-
-        $fromform = $mform->get_data();
-        update_moduleinfo($cm, $fromform, $course, $mform);
+        $fromform = $mform->get_submitted_data();
+        update_moduleinfo($cm, $fromform, $course);
         return ['status' => true, 'changes' => json_encode($changes)];
     }
 
