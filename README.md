@@ -205,6 +205,11 @@ parameters:
   * `immediately`
   * `open`
   * `closed`
+* `maxmarks`
+  * `during`
+  * `immediately`
+  * `open`
+  * `closed`
 * `marks`
   * `during`
   * `immediately`

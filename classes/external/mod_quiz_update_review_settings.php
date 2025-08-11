@@ -55,6 +55,12 @@ class mod_quiz_update_review_settings extends external_api {
                     'open' => new external_value(PARAM_BOOL, 'Open', VALUE_OPTIONAL),
                     'closed' => new external_value(PARAM_BOOL, 'Closed', VALUE_OPTIONAL),
                 ], 'Correctness', VALUE_DEFAULT, []),
+                'maxmarks' => new external_single_structure([
+                    'during' => new external_value(PARAM_BOOL, 'During', VALUE_OPTIONAL),
+                    'immediately' => new external_value(PARAM_BOOL, 'Immediately', VALUE_OPTIONAL),
+                    'open' => new external_value(PARAM_BOOL, 'Open', VALUE_OPTIONAL),
+                    'closed' => new external_value(PARAM_BOOL, 'Closed', VALUE_OPTIONAL),
+                ], 'Maximum marks', VALUE_DEFAULT, []),
                 'marks' => new external_single_structure([
                     'during' => new external_value(PARAM_BOOL, 'During', VALUE_OPTIONAL),
                     'immediately' => new external_value(PARAM_BOOL, 'Immediately', VALUE_OPTIONAL),
@@ -95,6 +101,7 @@ class mod_quiz_update_review_settings extends external_api {
      * @param int $quizid
      * @param array $attempt
      * @param array $correctness
+     * @param array $maxmarks
      * @param array $marks
      * @param array $specificfeedback
      * @param array $generalfeedback
@@ -102,13 +109,14 @@ class mod_quiz_update_review_settings extends external_api {
      * @param array $overallfeedback
      * @return array returns true in case of review settings were updated successfully.
      */
-    public static function execute(int $quizid, array $attempt, array $correctness, array $marks,
+    public static function execute(int $quizid, array $attempt, array $correctness, array $maxmarks, array $marks,
             array $specificfeedback, array $generalfeedback, array $rightanswer, array $overallfeedback): array {
         global $DB;
         $params = self::validate_parameters(self::execute_parameters(), [
             'quizid' => $quizid,
             'attempt' => $attempt,
             'correctness' => $correctness,
+            'maxmarks' => $maxmarks,
             'marks' => $marks,
             'specificfeedback' => $specificfeedback,
             'generalfeedback' => $generalfeedback,
@@ -148,12 +156,17 @@ class mod_quiz_update_review_settings extends external_api {
                     && (!isset($params['attempt'][$when]) || $params['attempt'][$when] === false)) {
                 throw new \invalid_parameter_exception("Can't set 'rightanswer' '$when' without 'attempt' '$when'");
             }
+            if (isset($params['marks'][$when]) && $params['marks'][$when] === true
+                    && (!isset($params['maxmarks'][$when]) || $params['maxmarks'][$when] === false)) {
+               throw new \invalid_parameter_exception("Can't set 'marks' '$when' without 'maxmarks' '$when'");
+            }
         }
 
         // Customise data. We only update values that were specified.
         $options = [
             'attempt',
             'correctness',
+            'maxmarks',
             'marks',
             'specificfeedback',
             'generalfeedback',
