@@ -138,7 +138,9 @@ class local_ehl_course_restore_backup extends external_api {
         $rc = new \restore_controller($backupdir, $courseid, \backup::INTERACTIVE_NO,
             \backup::MODE_ASYNC, $USER->id, $target);
 
-        if (!$rc->execute_precheck()) {
+        // Drop temp tables after precheck: the plan runs later in an adhoc task,
+        // so nothing in this request would clean them up.
+        if (!$rc->execute_precheck(true)) {
             $precheckresults = $rc->get_precheck_results();
             if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
                 // If errors are found, terminate the import.
